@@ -35,10 +35,15 @@ export const Form = () => {
   const [alertSuccess, setAlertSuccess] = useState(false);
   const dispatch = useDispatch();
   const allTypes = useSelector((state) => state.types);
+  const error = useSelector((state) => state.error);
 
   useEffect(() => {
     dispatch(getTypes());
   }, [dispatch]);
+
+  const handleAlertClose = () => {
+    setAlertSuccess(false);
+  };
 
   function handleSubmit(ev) {
     ev.preventDefault();
@@ -66,6 +71,7 @@ export const Form = () => {
       }
     } catch (error) {
       console.error("Ocurrio un error al enviar: " + error);
+      setAlertSuccess(false);
     }
   }
 
@@ -90,7 +96,8 @@ export const Form = () => {
 
   return (
     <div className={formContainer}>
-      {alertSuccess && <AlertSuccess />}
+      {alertSuccess && !error && <AlertSuccess onClose={handleAlertClose}/>}
+
       <h1>Crea tu pokemon</h1>
       <form onSubmit={handleSubmit}>
         <div className={formGroupImage}>
@@ -171,7 +178,7 @@ export const Form = () => {
               >
                 {allTypes &&
                   allTypes.map((type) => (
-                    <option key={type.name} value={type.name}>
+                    <option key={type.id} value={type.id}>
                       {type.name}
                     </option>
                   ))}

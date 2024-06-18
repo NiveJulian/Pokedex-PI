@@ -19,11 +19,24 @@ export const PokemonList = ({ pokemons, currentPage, setCurrentPage }) => {
     asc: false,
     desc: false,
   });
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [totalPages, setTotalPages] = useState(0);
   const dispatch = useDispatch();
+  
+  useEffect(() => {
+    if (pokemons && pokemons.length > 0) {
+      const total = Math.ceil(pokemons.length / itemsPerPage);
+      setTotalPages(total);
+    }
+  }, [pokemons, itemsPerPage]);
+
+  //índices de inicio y fin para los pokemones de la página actual
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, pokemons.length);
+  const currentPokemons = pokemons.slice(startIndex, endIndex);
 
   const handleCheckbox = (ev) => {
     const { name, checked } = ev.target;
-    console.log(name)
     setCheckboxState({ ...checkboxState, [name]: checked });
     if (name === "asc" && checked) {
       dispatch(sortPokemons(name));
@@ -36,31 +49,35 @@ export const PokemonList = ({ pokemons, currentPage, setCurrentPage }) => {
     } else if (name === "created" && checked) {
       dispatch(filterByCreated());
     }
-    
-    if (checked) {
+
+    if (checked && name !== "api" && name !== "created" && name !== "desc" && name !== "asc" ) {
       dispatch(filterPokemons(name));
-    }else{
+    } else if (!checked) {
       dispatch(clearFilters());
     }
   };
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [pokemons])
+  
 
   useEffect(() => {
     setLoading(false);
   }, [pokemons]);
 
   const handlePageChange = (page) => {
-    dispatch(clearFilters());
-    setLoading(true);
     setCurrentPage(page);
-    setCheckboxState({});
   };
-
+  
   const handleToggleFilterActive = () => {
     setFilterActive(!filterActive);
   };
 
   const handleCloseFilterBar = () => {
+    setCheckboxState({});
     setFilterActive(false);
+    dispatch(clearFilters());
   };
   return (
     <div className="pokemon-list-container">
@@ -92,7 +109,7 @@ export const PokemonList = ({ pokemons, currentPage, setCurrentPage }) => {
 
       <Pagination
         currentPage={currentPage}
-        totalPages={108}
+        totalPages={totalPages} // Utiliza el número total de páginas calculado dinámicamente
         onPageChange={handlePageChange}
       />
       {loading ? (
@@ -100,7 +117,7 @@ export const PokemonList = ({ pokemons, currentPage, setCurrentPage }) => {
       ) : (
         <div className="card-list-pokemon container">
           {pokemons &&
-            pokemons.map((pokemon, index) => (
+            currentPokemons.map((pokemon, index) => (
               <div key={`${pokemon.id}-${index}`} className={`pokemon-card`}>
                 <Card key={`${pokemon.id}-${index}`} pokemon={pokemon} />
               </div>

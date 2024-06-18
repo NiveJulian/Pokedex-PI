@@ -6,9 +6,15 @@ module.exports = (sequelize) => {
     "pokemon",
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+      },
+      externalId: {
+        type: DataTypes.INTEGER,
         autoIncrement: true,
+        allowNull: true,
       },
       name: {
         type: DataTypes.STRING,
@@ -16,7 +22,7 @@ module.exports = (sequelize) => {
       },
       image: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       life: {
         type: DataTypes.INTEGER,

@@ -6,6 +6,7 @@ import {
   GET_POKEMON_BY_NAME_FAILURE,
   GET_POKEMON_BY_ID_SUCCESS,
   GET_POKEMON_BY_ID_FAILURE,
+  CLEAN_POKEMON_BY_ID,
   CREATE_POKEMON_SUCCESS,
   CREATE_POKEMON_FAILURE,
   GET_TYPES_SUCCESS,
@@ -17,29 +18,26 @@ import {
   FILTER_BY_CREATED,
 } from "../Actions/actions";
 
-// Define el estado inicial
 const initialState = {
   pokemons: [],
   allPokemons: [],
   types: [],
+  filteredPokemons: [],
   createdPokemons: [],
+  detailPokemon: {},
   foundPokemonName: null,
   error: null,
   filterType: null,
 };
 
-// Define el reducer
 const rootReducer = (state = initialState, action) => {
   const { type, payload } = action;
-  let filteredPokemons;
-  let sortedPokemons;
-  let selectedTypes;
 
   switch (type) {
     case GET_POKEMONS_SUCCESS:
       return {
         ...state,
-        pokemons: payload.api,
+        pokemons: [...payload.created, ...payload.api],
         allPokemons: payload.api,
         createdPokemons: payload.created,
         error: null,
@@ -52,7 +50,8 @@ const rootReducer = (state = initialState, action) => {
     case GET_POKEMON_BY_NAME_SUCCESS:
       return {
         ...state,
-        pokemons: [payload.pokemon], // Agregar el nuevo Pokémon al array existente
+        pokemons: [payload.pokemon],
+        allPokemons: [payload.pokemon],
         foundPokemonName: payload.foundPokemonName,
         error: null,
       };
@@ -64,13 +63,19 @@ const rootReducer = (state = initialState, action) => {
     case GET_POKEMON_BY_ID_SUCCESS:
       return {
         ...state,
-        pokemons: [...state.pokemons, payload.pokemon], // Agregar el nuevo Pokémon al array existente
+        detailPokemon: payload,
         error: null,
       };
     case GET_POKEMON_BY_ID_FAILURE:
       return {
         ...state,
         error: payload,
+      };
+    case CLEAN_POKEMON_BY_ID:
+      return {
+        ...state,
+        detailPokemon: {},
+        error: null,
       };
     case CREATE_POKEMON_SUCCESS:
       return {
@@ -97,46 +102,65 @@ const rootReducer = (state = initialState, action) => {
     case FILTER_BY_API:
       return {
         ...state,
-        pokemons: state.allPokemons,
+        filteredPokemons: state.allPokemons,
         filterType: "api",
       };
-
     case FILTER_BY_CREATED:
       return {
         ...state,
-        pokemons: state.createdPokemons,
+        filteredPokemons: state.createdPokemons,
         filterType: "created",
       };
     case FILTER_POKEMONS:
-      selectedTypes = Array.isArray(action.payload)
-        ? action.payload
-        : [action.payload];
-      filteredPokemons = state.pokemons.filter((pokemon) => {
-        return selectedTypes.every((type) => pokemon.types.includes(type));
-      });
-      return {
-        ...state,
-        filteredPokemons,
-      };
+      if (state.filteredPokemons.length > 0) {
+        return {
+          ...state,
+          filteredPokemons: state.filteredPokemons.filter((pokemon) =>
+            pokemon.types.includes(payload)
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          filteredPokemons: state.pokemons.filter((pokemon) =>
+            pokemon.types.includes(payload)
+          ),
+        };
+      }
     case SORT_POKEMONS:
-      sortedPokemons = [...state.pokemons].sort((a, b) => {
-        if (payload === "asc") {
-          return a.name.localeCompare(b.name);
-        } else if (payload === "desc") {
-          return b.name.localeCompare(a.name);
-        } else {
-          return state.allPokemons;
-        }
-      });
-      return {
-        ...state,
-        pokemons: sortedPokemons,
-      };
+      if (state.filteredPokemons.length > 0) {
+        return {
+          ...state,
+          filteredPokemons: [...state.filteredPokemons].sort((a, b) => {
+            if (payload === "asc") {
+              return a.name.localeCompare(b.name);
+            } else if (payload === "desc") {
+              return b.name.localeCompare(a.name);
+            } else {
+              return state.pokemons;
+            }
+          }),
+        };
+      } else {
+        return {
+          ...state,
+          filteredPokemons: [...state.pokemons].sort((a, b) => {
+            if (payload === "asc") {
+              return a.name.localeCompare(b.name);
+            } else if (payload === "desc") {
+              return b.name.localeCompare(a.name);
+            } else {
+              return state.pokemons;
+            }
+          }),
+        };
+      }
     case CLEAR_FILTERS:
       return {
         ...state,
-        pokemons: state.allPokemons,
-        filteredPokemons: null,
+        pokemons: state.pokemons,
+        filteredPokemons: [],
+        filterType: null,
       };
     default:
       return state;

@@ -24,8 +24,8 @@ export const HomePage = () => {
   }, []);
 
   useEffect(() => {
-      dispatch(getPokemons(currentPage));
-  }, [dispatch, currentPage]);
+      dispatch(getPokemons());
+  }, [dispatch]);
 
   return (
     <>

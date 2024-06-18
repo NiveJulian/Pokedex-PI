@@ -11,7 +11,7 @@ export default function AppRouter() {
       {location.pathname !== "/" && <Nav />}
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path={"/home" || "/home?search"} element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/form" element={<Form />} />
         <Route path="/pokemon/:id" element={<PokemonPage />} />
         <Route path="*" element={<Navigate to="/" />} />

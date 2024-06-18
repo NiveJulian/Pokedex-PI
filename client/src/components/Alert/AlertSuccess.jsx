@@ -1,5 +1,5 @@
 const AlertSuccess = ({ message, onClose }) => (
-  <div className="pokemon-alert-success" onClick={onClose}>
+  <a href={"/home"} className="pokemon-alert-success" onClick={onClose}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -16,7 +16,7 @@ const AlertSuccess = ({ message, onClose }) => (
     </svg>
     <span>{message}</span>
     <p>Preciona en el en cualquier lugar para cerrar</p>
-  </div>
+  </a>
 );
 
 export default AlertSuccess;

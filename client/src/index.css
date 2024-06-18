@@ -130,12 +130,22 @@ header form {
     gap: 15px;
     margin-bottom: 20px;
     cursor: pointer;
+    padding: 10px;
+    border-radius: 25%;
+
 }
 
 .icon-filter .icon {
     width: 30px;
     height: 30px;
     stroke: #555;
+}
+
+.icon-filter:hover{
+    box-shadow: 0 1px 1px 2px rgba(43, 43, 43, 0.618);
+    border-radius: 25%;
+    padding: 11px;
+    transition: all .4s ease-in;
 }
 
 /* Card List Pokemon */
@@ -295,6 +305,11 @@ header form {
     left: 0;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.container-filters .row h6{
+    text-align: center;
+    margin: 0;
 }
 
 .filter-by-order {
@@ -588,10 +603,15 @@ header form {
     width: 100%;
     border-radius: 20px;
     border: solid 1px #000;
-    margin: 20px;
+    margin: 10px 0;
 }
 
 .disabled{
     transition: all 2s ease-in-out;
     display: none;
+}
+
+.icon-filterbar{
+    width: 24px;
+    height: 24px;
 }

@@ -3,23 +3,19 @@ import styles from "./Pagination.module.css";
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const pages = [];
 
-  // rango
-  let startPage = currentPage - 2;
-  let endPage = currentPage + 2;
+  // Calcula el rango de páginas
+  let startPage = Math.max(1, currentPage - 2);
+  let endPage = Math.min(currentPage + 2, totalPages);
 
-  // Ajuste 5 izq
-  if (startPage < 1) {
-    endPage -= startPage - 1;
-    startPage = 1;
+  const range = endPage - startPage + 1;
+  if (range < 5) {
+    if (startPage === 1) {
+      endPage = Math.min(totalPages, startPage + 4);
+    } else {
+      startPage = Math.max(1, endPage - 4);
+    }
   }
-
-  // Ajuste 5 der
-  if (endPage > totalPages) {
-    startPage -= endPage - totalPages;
-    endPage = totalPages;
-  }
-
-  // Generar números de página dentro del rango
+  
   for (let i = startPage; i <= endPage; i++) {
     pages.push(i);
   }

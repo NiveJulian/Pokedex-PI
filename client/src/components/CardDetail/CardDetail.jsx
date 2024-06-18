@@ -1,12 +1,13 @@
 
 
 export const CardDetail = ({ pokemon }) => {
+    
 
     return (
         <main className="container main-pokemon">
                 <div className="content">
                     <div className="header-main-pokemon">
-                        <span className="number-pokemon">#{pokemon?.id}</span>
+                        <span className="number-pokemon">#{pokemon?.externalId ? pokemon?.externalId : pokemon?.id}</span>
                         <div className="container-img-pokemon">
                             <img src={pokemon?.image} alt={`Pokemon ${pokemon?.name}`} />
                         </div>
@@ -14,7 +15,7 @@ export const CardDetail = ({ pokemon }) => {
                         <div className="container-info-pokemon">
                             <h1>{pokemon?.name}</h1>
                             <div className="card-types info-pokemon-type">
-                                {pokemon?.types.map((type) => (
+                                {pokemon?.types?.map((type) => (
                                     <span key={type} className={`${type}`}>
                                         {type}
                                     </span>
